@@ -364,7 +364,7 @@ namespace MediaBrowser.Controller.Entities
                 return true;
             }
 
-            // For top parents i.e. Library folders, skip the validation if it's empty or inaccessible
+            // For top parents i.e. Library folders, skip the validation if it's inaccessible
             if (item.IsTopParent && !directoryService.IsAccessible(item.ContainingFolderPath))
             {
                 Logger.LogWarning("Library folder {LibraryFolderPath} is inaccessible or empty, skipping", item.ContainingFolderPath);
@@ -1964,6 +1964,7 @@ namespace MediaBrowser.Controller.Entities
                 if (SupportsPlayedStatus)
                 {
                     var unplayedCount = totalCount - playedCount;
+                    dto.TotalCount = totalCount;
                     dto.UnplayedItemCount = unplayedCount;
 
                     if (totalCount > 0)

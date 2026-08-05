@@ -20,6 +20,12 @@ namespace MediaBrowser.Model.Dto
         public double? PlayedPercentage { get; set; }
 
         /// <summary>
+        /// Gets or sets the total item count.
+        /// </summary>
+        /// <value>The total item count.</value>
+        public int? TotalCount { get; set; }
+
+        /// <summary>
         /// Gets or sets the unplayed item count.
         /// </summary>
         /// <value>The unplayed item count.</value>
