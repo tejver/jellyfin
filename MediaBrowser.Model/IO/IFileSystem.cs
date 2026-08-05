@@ -221,6 +221,8 @@ namespace MediaBrowser.Model.IO
         /// <returns>IEnumerable&lt;System.String&gt;.</returns>
         IEnumerable<string> GetFileSystemEntryPaths(string path, bool recursive = false);
 
+        bool GetFileSystemPathAccess(string path, bool recursive = false);
+
         void SetHidden(string path, bool isHidden);
 
         void SetAttributes(string path, bool isHidden, bool readOnly);

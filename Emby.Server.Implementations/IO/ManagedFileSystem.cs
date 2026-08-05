@@ -697,6 +697,21 @@ namespace Emby.Server.Implementations.IO
         }
 
         /// <inheritdoc />
+        public virtual bool GetFileSystemPathAccess(string path, bool recursive = false)
+        {
+            try
+            {
+                var dir = Directory.EnumerateFileSystemEntries(path, "*", GetEnumerationOptions(recursive));
+                return true;
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or DirectoryNotFoundException or SecurityException)
+            {
+                _logger.LogError(ex, "Failed to enumerate path {Path}", path);
+                return false;
+            }
+        }
+
+        /// <inheritdoc />
         public virtual bool DirectoryExists(string path)
         {
             return Directory.Exists(path);

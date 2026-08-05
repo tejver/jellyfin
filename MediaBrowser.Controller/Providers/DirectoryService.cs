@@ -132,7 +132,7 @@ namespace MediaBrowser.Controller.Providers
 
         public bool IsAccessible(string path)
         {
-            return _fileSystem.GetFileSystemEntryPaths(path).Any();
+            return _fileSystem.GetFileSystemPathAccess(path);
         }
     }
 }
