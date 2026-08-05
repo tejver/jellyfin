@@ -334,13 +334,6 @@ public class ItemsController : BaseJellyfinApiController
             };
         }
 
-        // includeItemTypes on a library lists its contents recursively rather than just its
-        // immediate children, so default to a recursive query when the client didn't choose.
-        if (folder is ICollectionFolder && includeItemTypes.Length > 0)
-        {
-            recursive ??= true;
-        }
-
         if (item is not UserRootFolder
             // api keys can always access all folders
             && !isApiKey
@@ -591,7 +584,7 @@ public class ItemsController : BaseJellyfinApiController
         query.Parent = null;
 
         // At the user root an unfiltered, non-recursive request is a plain listing of the user's libraries
-        if ((recursive.HasValue && recursive.Value) || ids.Length != 0 || item is not UserRootFolder || query.HasFilters)
+        if ((recursive.HasValue && recursive.Value) || ids.Length != 0)
         {
             // folder.GetItems applies user-access filtering via the InternalItemsQuery's User.
             result = folder.GetItems(query);
@@ -623,6 +616,41 @@ public class ItemsController : BaseJellyfinApiController
         {
             var itemsArray = folder.GetChildren(user, true);
             result = new QueryResult<BaseItem>(itemsArray);
+
+            if (query.OrderBy.Count > 0 || !string.IsNullOrEmpty(query.NameStartsWith))
+            {
+                var recursiveItems = new List<BaseItem>();
+
+                var filterItems = _libraryManager.Sort(result.Items.ToArray(), user, query.OrderBy);
+
+                foreach (var filterItem in filterItems)
+                {
+                    if (filterItem.IsFolder)
+                    {
+                        var subItem = _libraryManager.Sort(((Folder)filterItem).Children.ToArray(), user, query.OrderBy);
+                        ((Folder)filterItem).Children = subItem;
+                        recursiveItems.Add(filterItem);
+                    }
+                    else
+                    {
+                        recursiveItems.Add(filterItem);
+                    }
+                }
+
+                if (query.NameStartsWith != null)
+                {
+                    recursiveItems = recursiveItems.Where(x => x.Name.StartsWith(query.NameStartsWith, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                }
+
+                var orderedItems = recursiveItems.ToArray();
+
+                var totalCount = orderedItems.Length;
+
+                return new QueryResult<BaseItemDto>(
+                    startIndex,
+                    totalCount,
+                    _dtoService.GetBaseItemDtos(orderedItems, dtoOptions, user));
+            }
         }
 
         return new QueryResult<BaseItemDto>(
