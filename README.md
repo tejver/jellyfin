@@ -200,4 +200,4 @@ This project is supported by:
 
 ## Use Case
 
-Offline installation of Jellyfin
+Offline installation of Jellyfin, files are copied from existing Jellyfin implementation to an offline instance
