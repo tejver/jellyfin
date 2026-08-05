@@ -124,7 +124,7 @@ public class ServerConfiguration : BaseApplicationConfiguration
     /// Gets or sets words to be removed from strings to create a sort name.
     /// </summary>
     /// <value>The sort remove words.</value>
-    public string[] SortRemoveWords { get; set; } = new[] { "the", "a", "an" };
+    public string[] SortRemoveWords { get; set; } = Array.Empty<string>();
 
     /// <summary>
     /// Gets or sets the minimum percentage of an item that must be played in order for playstate to be updated.
