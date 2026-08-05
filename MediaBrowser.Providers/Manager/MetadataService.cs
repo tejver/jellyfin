@@ -117,7 +117,6 @@ namespace MediaBrowser.Providers.Manager
                 }
             }
 
-            var localImagesFailed = false;
             var allImageProviders = ProviderManager.GetImageProviders(item, refreshOptions).ToList();
 
             // Only validate already registered images if we are replacing and saving locally
@@ -137,7 +136,6 @@ namespace MediaBrowser.Providers.Manager
                 }
                 catch (Exception ex)
                 {
-                    localImagesFailed = true;
                     Logger.LogError(ex, "Error validating images for {Item}", item.Path ?? item.Name ?? "Unknown name");
                 }
             }
@@ -188,23 +186,6 @@ namespace MediaBrowser.Providers.Manager
                     if (result.Failures > 0)
                     {
                         hasRefreshedMetadata = false;
-                    }
-                }
-            }
-
-            // Next run remote image providers, but only if local image providers didn't throw an exception
-            if (!localImagesFailed && refreshOptions.ImageRefreshMode > MetadataRefreshMode.ValidationOnly)
-            {
-                var providers = GetNonLocalImageProviders(item, allImageProviders, refreshOptions).ToList();
-
-                if (providers.Count > 0)
-                {
-                    var result = await ImageProvider.RefreshImages(itemOfType, libraryOptions, providers, refreshOptions, cancellationToken).ConfigureAwait(false);
-
-                    updateType |= result.UpdateType;
-                    if (result.Failures > 0)
-                    {
-                        hasRefreshedImages = false;
                     }
                 }
             }
@@ -288,6 +269,9 @@ namespace MediaBrowser.Providers.Manager
                 var baseItem = result.Item;
 
                 await LibraryManager.UpdatePeopleAsync(baseItem, result.People, cancellationToken).ConfigureAwait(false);
+
+                // Save if people have been updated
+                await result.Item.UpdateToRepositoryAsync(reason, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -741,11 +725,6 @@ namespace MediaBrowser.Providers.Manager
                 await RunCustomProvider(provider, item, logName, options, refreshResult, cancellationToken).ConfigureAwait(false);
             }
 
-            if (item.IsLocked)
-            {
-                return refreshResult;
-            }
-
             var temp = new MetadataResult<TItemType>
             {
                 Item = CreateNew()
@@ -829,6 +808,7 @@ namespace MediaBrowser.Providers.Manager
             }
 
             var isLocalLocked = temp.Item.IsLocked;
+
             if (!isLocalLocked && (options.ReplaceAllMetadata || options.MetadataRefreshMode > MetadataRefreshMode.ValidationOnly))
             {
                 var remoteProviders = providers.OfType<IRemoteMetadataProvider<TItemType, TIdType>>();
@@ -847,33 +827,22 @@ namespace MediaBrowser.Providers.Manager
                 refreshResult.Failures += remoteResult.Failures;
             }
 
-            if (providers.Any(i => i is not ICustomMetadataProvider))
+            if (!options.RemoveOldMetadata)
             {
-                if (refreshResult.UpdateType > ItemUpdateType.None)
-                {
-                    if (!options.RemoveOldMetadata)
-                    {
-                        // Add existing metadata to provider result if it does not exist there
-                        MergeData(metadata, temp, [], false, false);
-                    }
-
-                    if (isLocalLocked)
-                    {
-                        MergeData(temp, metadata, item.LockedFields, true, true);
-                    }
-                    else
-                    {
-                        var shouldReplace = (options.MetadataRefreshMode > MetadataRefreshMode.ValidationOnly && options.ReplaceAllMetadata)
-                            // Case for Scan for new and updated files
-                            || (options.MetadataRefreshMode == MetadataRefreshMode.Default && !options.ReplaceAllMetadata);
-                        MergeData(temp, metadata, item.LockedFields, shouldReplace, true);
-                    }
-                }
+                // Add existing metadata to provider result if it does not exist there
+                MergeData(metadata, temp, [], false, false);
             }
 
-            foreach (var provider in customProviders.Where(i => i is not IPreRefreshProvider))
+            if (isLocalLocked)
             {
-                await RunCustomProvider(provider, item, logName, options, refreshResult, cancellationToken).ConfigureAwait(false);
+                MergeData(temp, metadata, item.LockedFields, true, true);
+            }
+            else
+            {
+                var shouldReplace = (options.MetadataRefreshMode > MetadataRefreshMode.ValidationOnly && options.ReplaceAllMetadata)
+                    // Case for Scan for new and updated files
+                    || (options.MetadataRefreshMode == MetadataRefreshMode.Default && !options.ReplaceAllMetadata);
+                MergeData(temp, metadata, item.LockedFields, shouldReplace, true);
             }
 
             return refreshResult;
@@ -915,36 +884,7 @@ namespace MediaBrowser.Providers.Manager
             foreach (var provider in providers)
             {
                 var providerName = provider.GetType().Name;
-                Logger.LogDebug("Running {Provider} for {Item}", providerName, logName);
-
-                try
-                {
-                    var result = await provider.GetMetadata(id, cancellationToken).ConfigureAwait(false);
-
-                    if (result.HasMetadata)
-                    {
-                        result.Provider = provider.Name;
-
-                        MergeData(result, temp, [], replaceData, false);
-                        MergeNewData(temp.Item, id);
-
-                        refreshResult.UpdateType |= ItemUpdateType.MetadataDownload;
-                    }
-                    else
-                    {
-                        Logger.LogDebug("{Provider} returned no metadata for {Item}", providerName, logName);
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    refreshResult.Failures++;
-                    refreshResult.ErrorMessage = ex.Message;
-                    Logger.LogError(ex, "Error in {Provider} for {Item}", provider.Name, logName);
-                }
+                Logger.LogInformation("Skipping {Provider} for {Item}", providerName, logName);
             }
 
             return refreshResult;
