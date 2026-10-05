@@ -1,4 +1,3 @@
-using Jellyfin.LiveTv;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.LiveTv;
 using MediaBrowser.Model.Entities;
