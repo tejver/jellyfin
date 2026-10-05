@@ -8,7 +8,7 @@ namespace MediaBrowser.Model.Providers
         /// <summary>
         /// Initializes a new instance of the <see cref="ExternalIdInfo"/> class.
         /// </summary>
-        /// <param name="name">Name of the external id provider (IE: IMDB, MusicBrainz, etc).</param>
+        /// <param name="name">Name of the external id provider (IE: IMDB, etc).</param>
         /// <param name="key">Key for this id. This key should be unique across all providers.</param>
         /// <param name="type">Specific media type for this id.</param>
         public ExternalIdInfo(string name, string key, ExternalIdMediaType? type)
@@ -19,7 +19,7 @@ namespace MediaBrowser.Model.Providers
         }
 
         /// <summary>
-        /// Gets or sets the display name of the external id provider (IE: IMDB, MusicBrainz, etc).
+        /// Gets or sets the display name of the external id provider (IE: IMDB, etc).
         /// </summary>
         // TODO: This should be renamed to ProviderName
         public string Name { get; set; }

@@ -84,13 +84,7 @@ namespace MediaBrowser.XbmcMetadata.Savers
             "audiodbartistid",
             "enddate",
             "lockedfields",
-            "zap2itid",
-            "tvrageid",
 
-            "musicbrainzartistid",
-            "musicbrainzalbumartistid",
-            "musicbrainzalbumid",
-            "musicbrainzreleasegroupid",
             "tvdbid",
             "collectionitem",
 
@@ -714,42 +708,6 @@ namespace MediaBrowser.XbmcMetadata.Savers
             {
                 writer.WriteElementString("audiodbalbumid", externalId);
                 writtenProviderIds.Add(MetadataProvider.AudioDbAlbum.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.Zap2It, out externalId))
-            {
-                writer.WriteElementString("zap2itid", externalId);
-                writtenProviderIds.Add(MetadataProvider.Zap2It.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.MusicBrainzAlbum, out externalId))
-            {
-                writer.WriteElementString("musicbrainzalbumid", externalId);
-                writtenProviderIds.Add(MetadataProvider.MusicBrainzAlbum.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.MusicBrainzAlbumArtist, out externalId))
-            {
-                writer.WriteElementString("musicbrainzalbumartistid", externalId);
-                writtenProviderIds.Add(MetadataProvider.MusicBrainzAlbumArtist.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.MusicBrainzArtist, out externalId))
-            {
-                writer.WriteElementString("musicbrainzartistid", externalId);
-                writtenProviderIds.Add(MetadataProvider.MusicBrainzArtist.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.MusicBrainzReleaseGroup, out externalId))
-            {
-                writer.WriteElementString("musicbrainzreleasegroupid", externalId);
-                writtenProviderIds.Add(MetadataProvider.MusicBrainzReleaseGroup.ToString());
-            }
-
-            if (item.TryGetProviderId(MetadataProvider.TvRage, out externalId))
-            {
-                writer.WriteElementString("tvrageid", externalId);
-                writtenProviderIds.Add(MetadataProvider.TvRage.ToString());
             }
 
             if (item.ProviderIds is not null)

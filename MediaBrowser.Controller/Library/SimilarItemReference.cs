@@ -6,7 +6,7 @@ namespace MediaBrowser.Controller.Library;
 public class SimilarItemReference
 {
     /// <summary>
-    /// Gets or sets the provider name (e.g., "Tmdb", "MusicBrainzArtist").
+    /// Gets or sets the provider name (e.g., "Tmdb").
     /// </summary>
     public required string ProviderName { get; set; }
 

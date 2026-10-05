@@ -167,11 +167,6 @@ public class RecordingsMetadataManager
                     await writer.WriteElementStringAsync(null, "tmdbid", null, id).ConfigureAwait(false);
                 }
 
-                if (timer.SeriesProviderIds.TryGetValue(MetadataProvider.Zap2It.ToString(), out id))
-                {
-                    await writer.WriteElementStringAsync(null, "zap2itid", null, id).ConfigureAwait(false);
-                }
-
                 if (!string.IsNullOrWhiteSpace(timer.Name))
                 {
                     await writer.WriteElementStringAsync(null, "title", null, timer.Name).ConfigureAwait(false);
