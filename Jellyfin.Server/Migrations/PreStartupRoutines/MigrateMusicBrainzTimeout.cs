@@ -2,7 +2,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using Emby.Server.Implementations;
-using MediaBrowser.Providers.Plugins.MusicBrainz.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Server.Migrations.PreStartupRoutines;
@@ -30,41 +29,7 @@ public class MigrateMusicBrainzTimeout : IMigrationRoutine
     /// <inheritdoc />
     public void Perform()
     {
-        string path = Path.Combine(_applicationPaths.PluginConfigurationsPath, "Jellyfin.Plugin.MusicBrainz.xml");
-        if (!File.Exists(path))
-        {
-            _logger.LogDebug("No MusicBrainz plugin configuration file found, skipping");
-            return;
-        }
-
-        var oldPluginConfiguration = ReadOld(path);
-
-        if (oldPluginConfiguration is not null)
-        {
-            var newPluginConfiguration = new PluginConfiguration
-            {
-                Server = oldPluginConfiguration.Server,
-                ReplaceArtistName = oldPluginConfiguration.ReplaceArtistName
-            };
-            var newRateLimit = oldPluginConfiguration.RateLimit / 1000.0;
-            newPluginConfiguration.RateLimit = newRateLimit < 1.0 ? 1.0 : newRateLimit;
-            WriteNew(path, newPluginConfiguration);
-        }
-    }
-
-    private OldMusicBrainzConfiguration? ReadOld(string path)
-    {
-        using var xmlReader = XmlReader.Create(path);
-        var serverConfigSerializer = new XmlSerializer(typeof(OldMusicBrainzConfiguration), new XmlRootAttribute("PluginConfiguration"));
-        return serverConfigSerializer.Deserialize(xmlReader) as OldMusicBrainzConfiguration;
-    }
-
-    private void WriteNew(string path, PluginConfiguration newPluginConfiguration)
-    {
-        var pluginConfigurationSerializer = new XmlSerializer(typeof(PluginConfiguration), new XmlRootAttribute("PluginConfiguration"));
-        var xmlWriterSettings = new XmlWriterSettings { Indent = true };
-        using var xmlWriter = XmlWriter.Create(path, xmlWriterSettings);
-        pluginConfigurationSerializer.Serialize(xmlWriter, newPluginConfiguration);
+        return;
     }
 
 #pragma warning disable
