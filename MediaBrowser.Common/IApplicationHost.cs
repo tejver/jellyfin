@@ -70,7 +70,6 @@ namespace MediaBrowser.Common
 
         /// <summary>
         /// Gets the email address for use within a comment section of a user agent field.
-        /// Presently used to provide contact information to MusicBrainz service.
         /// </summary>
         string ApplicationUserAgentAddress { get; }
 

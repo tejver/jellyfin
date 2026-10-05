@@ -106,15 +106,6 @@ namespace Jellyfin.Server
                 })
                 .ConfigurePrimaryHttpMessageHandler(eyeballsHttpClientHandlerDelegate);
 
-            services.AddHttpClient(NamedClient.MusicBrainz, c =>
-                {
-                    c.DefaultRequestHeaders.UserAgent.Add(productHeader);
-                    c.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue($"({_serverApplicationHost.ApplicationUserAgentAddress})"));
-                    c.DefaultRequestHeaders.Accept.Add(acceptXmlHeader);
-                    c.DefaultRequestHeaders.Accept.Add(acceptAnyHeader);
-                })
-                .ConfigurePrimaryHttpMessageHandler(eyeballsHttpClientHandlerDelegate);
-
             services.AddHttpClient(NamedClient.DirectIp, c =>
                 {
                     c.DefaultRequestHeaders.UserAgent.Add(productHeader);

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- ProjectGuid is only included as a requirement for SonarQube analysis -->
   <PropertyGroup>
@@ -17,14 +17,12 @@
   <ItemGroup>
     <PackageReference Include="AsyncKeyedLock" />
     <PackageReference Include="LrcParser" />
-    <PackageReference Include="MetaBrainz.MusicBrainz" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="PlaylistsNET" />
     <PackageReference Include="SharpCompress" />
     <PackageReference Include="z440.atl.core" />
-    <PackageReference Include="TMDbLib" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1054,9 +1054,7 @@ public class LibraryController : BaseJellyfinApiController
                          || string.Equals(type, "MusicVideo", StringComparison.OrdinalIgnoreCase));
             }
 
-            return string.Equals(name, "TheTVDB", StringComparison.OrdinalIgnoreCase)
-                   || string.Equals(name, "TheAudioDB", StringComparison.OrdinalIgnoreCase)
-                   || string.Equals(name, "MusicBrainz", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(name, "TheTVDB", StringComparison.OrdinalIgnoreCase);
         }
 
         var metadataOptions = _serverConfigurationManager.GetMetadataOptionsForType(type);
@@ -1077,7 +1075,6 @@ public class LibraryController : BaseJellyfinApiController
 
             return string.Equals(name, "TheTVDB", StringComparison.OrdinalIgnoreCase)
                    || string.Equals(name, "Screen Grabber", StringComparison.OrdinalIgnoreCase)
-                   || string.Equals(name, "TheAudioDB", StringComparison.OrdinalIgnoreCase)
                    || string.Equals(name, "Image Extractor", StringComparison.OrdinalIgnoreCase);
         }
 
