@@ -1,6 +1,3 @@
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 using Emby.Server.Implementations;
 using Microsoft.Extensions.Logging;
 
